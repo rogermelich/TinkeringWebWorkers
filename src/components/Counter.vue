@@ -1,7 +1,10 @@
 <template>
-    <p>Count numbers: </p>
-    <button onclick="startWorker()">Start Worker</button>
-    <button onclick="stopWorker()">Stop Worker</button>
+    <div>
+        <p>Count numbers: {{ counter }}</p>
+        <button @click="startWorker">Start Worker</button>
+        <button @click="stopWorker()">Stop Worker</button>
+    </div>
+
 </template>
 
 <script>
@@ -14,43 +17,29 @@
         }
       },
       methods: {
-        startWorker () {
+        startWorker: function () {
+          console.log('start Worker')
+          var component = this
           if (typeof (Worker) !== 'undefined') {
+            console.log('1')
             if (typeof (w) === 'undefined') {
-              w = new Worker('js/counter.js')
+              console.log('2')
+              w = new Worker('/static/js/counter.js')
             }
             w.onmessage = function (event) {
-              document.getElementById('result').innerHTML = event.data
+              console.log('3')
+              console.log('received data: ' + event.data)
+              component.counter = event.data
             }
           } else {
-            document.getElementById('result').innerHTML = 'Sorry! No Web Worker support.'
+            console.log('Sorry! No Web Worker support.')
           }
         },
-        stopWorker () {
+        stopWorker: function () {
+          console.log('stop Worker')
           w.terminate()
           w = undefined
         }
       }
     }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-    h1, h2 {
-        font-weight: normal;
-    }
-
-    ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    li {
-        display: inline-block;
-        margin: 0 10px;
-    }
-
-    a {
-        color: #42b983;
-    }
-</style>
